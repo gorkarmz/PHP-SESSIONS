@@ -32,7 +32,7 @@ if (isset($_POST['product'])) {
 
     if (
         isset($_SESSION['stock'][$product]) &&
-        $_SESSION['stock'][$product] >= 0 
+         $_SESSION['stock'][$product] > 0  
     ) {
         // Increase quantity in cart
         if (!isset($_SESSION['cart'][$product])) {

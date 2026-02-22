@@ -1,85 +1,109 @@
 <?php
 session_start();
 
-// Inicializar carrito si no existe
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+if (!isset($_SESSION["leche"])) {
+    $_SESSION["leche"] = 0;
 }
 
-// to process the form
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if (!isset($_SESSION["refresco"])) {
+    $_SESSION["refresco"] = 0;
+}
 
-    // detect button (add or remove)
-    if (isset($_POST['MODIFY'])) {
+$trabajador = "";
+$error = "";
 
-        // to add products
-        $product = $_POST['extension'];
-        $quantity = (int) $_POST['quantity'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        // evaluate product
-        if ($product !== "" && $quantity > 0) {
+    $trabajador = $_POST["trabajador"];
 
-            // add quantity to corresponding product
-            if (!isset($_SESSION['cart'][$product])) {
-                $_SESSION['cart'][$product] = 0;
-            }
+    if (isset($_POST["add"])) {
 
-            // add quantity to corresponding product
-            $_SESSION['cart'][$product] += $quantity;
+        $producto = $_POST["product"];
+        $cantidad = (int)$_POST["quantity"];
+
+        if ($producto == "leche") {
+            $_SESSION["leche"] += $cantidad;
         }
 
-    } elseif (isset($_POST['AVERAGE'])) {
+        if ($producto == "refresco") {
+            $_SESSION["refresco"] += $cantidad;
+        }
+    }
 
-        // to remove products
-        $product = $_POST['extension'];
-        $quantity = (int) $_POST['quantity'];
+    if (isset($_POST["remove"])) {
 
-        // evaluate product
-        if (isset($_SESSION['cart'][$product])) {
+        $producto = $_POST["product"];
+        $cantidad = (int)$_POST["quantity"];
 
-            // check if quantity is not greater than current one
-            if ($quantity <= $_SESSION['cart'][$product]) {
-
-                // substract from quantity to corresponding product
-                $_SESSION['cart'][$product] -= $quantity;
-
-                if ($_SESSION['cart'][$product] === 0) {
-                    unset($_SESSION['cart'][$product]);
-                }
+        if ($producto == "leche") {
+            if ($cantidad > $_SESSION["leche"]) {
+                $error = "no hay suficientes unidades";
+            } else {
+                $_SESSION["leche"] -= $cantidad;
             }
         }
 
-    } elseif (isset($_POST['RESET'])) {
-        $_SESSION['cart'] = [];
+        if ($producto == "refresco") {
+            if ($cantidad > $_SESSION["refresco"]) {
+                $error = "no hay suficientes unidades";
+            } else {
+                $_SESSION["refresco"] -= $cantidad;
+            }
+        }
+    }
+
+    if (isset($_POST["reset"])) {
+        $_SESSION["leche"] = 0;
+        $_SESSION["refresco"] = 0;
+        $trabajador = "";
     }
 }
 ?>
 
-<h1>Supermercado Gorkaaaaaaaaaaaaa</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>goooorkaaaa</title>
+</head>
+<body>
 
-<form method="post">
+<h1>Ejercicio 2 goooorkaaaa</h1>
 
-    <h2>Choose product</h2>
-    <select name="extension" required>
-        <option value="">--Selecciona--</option>
-        <option value="0">Manzana</option>
-        <option value="1">Pera</option>
-        <option value="2">Mandarina</option>
-    </select><br><br>
+<form method="POST">
 
-    <h2>Product quantity:</h2>
-    <input type="number" name="quantity" min="1" required><br><br>
+    Nombre:
+    <input type="text" name="trabajador" value="<?php echo $trabajador; ?>" required>
+    <br><br>
 
-    <input type="submit" name="MODIFY" value="ADD">
-    <input type="submit" name="AVERAGE" value="REMOVE">
-    <input type="submit" name="RESET" value="RESET">
+    Producto:
+    <select name="product">
+        <option value="leche">leche</option>
+        <option value="refresco">refresco</option>
+    </select>
+    <br><br>
+
+    Cantidad:
+    <input type="number" name="quantity" min="0" value="0">
+    <br><br>
+
+    <button type="submit" name="add">AÑADIR</button>
+    <button type="submit" name="remove">ELIMINAR</button>
+    <button type="submit" name="reset">RESET</button>
+
 </form>
 
-<h2>Current cart</h2>
-<ul>
+<br>
+
+Trabajador: <?php echo $trabajador; ?><br>
+Leche: <?php echo $_SESSION["leche"]; ?><br>
+Refresco: <?php echo $_SESSION["refresco"]; ?><br>
+
 <?php
-foreach ($_SESSION['cart'] as $product => $quantity) {
-    echo "<li>Product $product: $quantity units</li>";
+if ($error != "") {
+    echo $error;
 }
 ?>
-</ul>
+
+</body>
+</html>

@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <input type="number" name="quantity" min="0" value="0">
     <br><br>
 
-    <button type="submit" name="add">AÑADIR</button>
+    <button type="submit" name="add">hola</button>
     <button type="submit" name="remove">ELIMINAR</button>
     <button type="submit" name="reset">RESET</button>
 
